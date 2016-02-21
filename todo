@@ -7,6 +7,8 @@ help() {
   echo "Options:"
   echo "  -a --add    : Add a todo"
   echo "  -d --delete : Delete a todo"
+  echo "  -o --open   : Open a todo"
+  echo "  -c --clear  : Clear all todos"
   echo "  -l --list   : List all todos"
   echo "  -h --help   : Show this help message"
 }
@@ -144,12 +146,12 @@ list() {
 while test $# -ne 0; do
   arg=$1; shift
   case $arg in
-    -h|--help) help; exit ;;
     -a|--add) add $@; exit ;;
     -d|--delete) delete $@; exit ;;
     -o|--open) open $@; exit ;;
     -c|--clear) clear; exit ;;
     -d|--list) list; exit;;
+    -h|--help) help; exit ;;
   esac
 done
 
