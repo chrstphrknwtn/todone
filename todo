@@ -1,0 +1,157 @@
+#!/usr/bin/env sh
+
+typeset tododir="$HOME/.todo"
+
+help() {
+  echo
+  echo "Options:"
+  echo "  -a --add    : Add a todo"
+  echo "  -d --delete : Delete a todo"
+  echo "  -l --list   : List all todos"
+  echo "  -h --help   : Show this help message"
+}
+
+#
+# abort with <msg>
+#
+abort() {
+  echo "\n\033[31m✖\033[0m $@" 1>&2
+  exit 1
+}
+
+#
+# success with <msg>
+#
+success() {
+  echo "\n\033[32m✔︎\033[0m $@"
+}
+
+#
+# todo not found
+#
+abort_notfound() {
+  abort "'$name' isn't a todo"
+}
+#
+# todo name not entered
+#
+abort_noname() {
+  abort "Enter a todo name"
+}
+
+#
+# Make sure the todo folder exists
+#
+tododir() {
+  command mkdir -p "$HOME/.todo"
+}
+
+#
+# add a todo
+#
+add() {
+  tododir
+
+  local name="$@"
+  local filepath="$tododir/$name.md"
+
+  if [ ! "$name" ]; then
+    abort_noname
+  fi
+
+  if [ ! -f "$filepath" ]; then
+    touch "$filepath"
+    echo "# $name" >> "$filepath"
+    success "'$name' todo added"
+  else
+    abort "'$name' is already a todo"
+  fi
+}
+
+#
+# delete a todo
+#
+delete() {
+  local name="$@"
+  local filepath="$tododir/$name.md"
+
+  if [ ! "$name" ]; then
+    abort_noname
+  fi
+
+  if [ -f "$filepath" ]; then
+    rm "$filepath"
+    success "'$name' todo deleted"
+  else
+    abort_notfound
+  fi
+}
+
+#
+# open a todo
+#
+open() {
+  local name="$@"
+  local filepath="$tododir/$name.md"
+
+  if [ ! "$name" ]; then
+    abort "Enter a todo to open"
+  fi
+
+  if [ $EDITOR ]; then
+    local opener=$EDITOR
+  else
+    local opener="open"
+  fi
+
+  if [ -f "$filepath" ]; then
+    command $opener "$filepath"
+  else
+    abort_notfound
+  fi
+}
+
+#
+# clear all todos
+#
+clear() {
+  read -r -p "Are you sure? [y/N] " response
+  case $response in
+    [yY][eE][sS]|[yY])
+      rm $tododir/*
+      success "Cleared todos"
+      ;;
+  esac
+}
+
+#
+# lists todos
+#
+list() {
+  if [ ! "`ls -tr $tododir`" ]; then
+    success "Todone!"
+    exit
+  fi
+
+  echo
+  command ls -tr $tododir | while read file;
+  do
+    echo $file | awk '{sub(/.md/, ""); print "· "$0}'
+  done
+}
+
+# parse argv
+while test $# -ne 0; do
+  arg=$1; shift
+  case $arg in
+    -h|--help) help; exit ;;
+    -a|--add) add $@; exit ;;
+    -d|--delete) delete $@; exit ;;
+    -o|--open) open $@; exit ;;
+    -c|--clear) clear; exit ;;
+    -d|--list) list; exit;;
+  esac
+done
+
+# list todos if no args
+list
