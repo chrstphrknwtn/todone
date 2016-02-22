@@ -143,13 +143,20 @@ clear() {
 }
 
 #
-# lists todos
+# Are we todone?
 #
-list() {
-  if [ ! "`ls -tr $TODODIR`" ]; then
+are_we_todone() {
+  if [ ! `ls -tr $TODODIR` ]; then
     success "Todone!"
     exit
   fi
+}
+
+#
+# lists todos
+#
+list() {
+  are_we_todone
 
   printf "\n"
   command ls -tr $TODODIR | while read TODO;
