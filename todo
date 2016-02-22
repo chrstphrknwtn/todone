@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+  #!/usr/bin/env sh
 
 typeset tododir="$HOME/.todo"
 
@@ -152,6 +152,8 @@ while test $# -ne 0; do
     -c|--clear) clear; exit ;;
     -d|--list) list; exit;;
     -h|--help) help; exit ;;
+    *)
+      test $# -eq 1 || abort "Unknown option"
   esac
 done
 
