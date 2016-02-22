@@ -1,5 +1,7 @@
   #!/usr/bin/env sh
 
+set -o posix
+
 typeset tododir="$HOME/.todo"
 
 help() {
@@ -120,7 +122,7 @@ clear() {
   read -r -p "Are you sure? [y/N] " response
   case $response in
     [yY][eE][sS]|[yY])
-      rm $tododir/*
+      rm $tododir/* &> /dev/null
       success "Cleared todos"
       ;;
   esac
