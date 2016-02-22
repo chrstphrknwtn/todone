@@ -2,7 +2,7 @@
 
 set -o posix
 
-typeset tododir="$HOME/.todo"
+typeset TODODIR="$HOME/.todo"
 
 help() {
   echo
@@ -34,7 +34,7 @@ success() {
 # todo not found
 #
 abort_notfound() {
-  abort "'$name' isn't a todo"
+  abort "'$NAME' isn't a todo"
 }
 #
 # todo name not entered
@@ -46,29 +46,29 @@ abort_noname() {
 #
 # Make sure the todo folder exists
 #
-tododir() {
-  command mkdir -p "$HOME/.todo"
+check_create_tododir() {
+  command mkdir -p $TODODIR
 }
 
 #
 # add a todo
 #
 add() {
-  tododir
+  check_create_tododir
 
-  local name="$@"
-  local filepath="$tododir/$name.md"
+  local NAME="$@"
+  local FILEPATH="$TODODIR/$NAME.md"
 
-  if [ ! "$name" ]; then
+  if [ ! "$NAME" ]; then
     abort_noname
   fi
 
-  if [ ! -f "$filepath" ]; then
-    touch "$filepath"
-    echo "# $name" >> "$filepath"
-    success "'$name' todo added"
+  if [ ! -f "$FILEPATH" ]; then
+    touch "$FILEPATH"
+    echo "# $NAME" >> "$FILEPATH"
+    success "'$NAME' todo added"
   else
-    abort "'$name' is already a todo"
+    abort "'$NAME' is already a todo"
   fi
 }
 
@@ -76,16 +76,16 @@ add() {
 # delete a todo
 #
 delete() {
-  local name="$@"
-  local filepath="$tododir/$name.md"
+  local NAME="$@"
+  local FILEPATH="$TODODIR/$NAME.md"
 
-  if [ ! "$name" ]; then
+  if [ ! "$NAME" ]; then
     abort_noname
   fi
 
-  if [ -f "$filepath" ]; then
-    rm "$filepath"
-    success "'$name' todo deleted"
+  if [ -f "$FILEPATH" ]; then
+    rm "$FILEPATH"
+    success "'$NAME' todo deleted"
   else
     abort_notfound
   fi
@@ -95,10 +95,10 @@ delete() {
 # open a todo
 #
 open() {
-  local name="$@"
-  local filepath="$tododir/$name.md"
+  local NAME="$@"
+  local FILEPATH="$TODODIR/$NAME.md"
 
-  if [ ! "$name" ]; then
+  if [ ! "$NAME" ]; then
     abort "Enter a todo to open"
   fi
 
@@ -108,8 +108,8 @@ open() {
     local opener="open"
   fi
 
-  if [ -f "$filepath" ]; then
-    command $opener "$filepath"
+  if [ -f "$FILEPATH" ]; then
+    command $opener "$FILEPATH"
   else
     abort_notfound
   fi
@@ -122,7 +122,7 @@ clear() {
   read -r -p "Are you sure? [y/N] " response
   case $response in
     [yY][eE][sS]|[yY])
-      rm $tododir/* &> /dev/null
+      rm $TODODIR/* &> /dev/null
       success "Cleared todos"
       ;;
   esac
@@ -132,15 +132,15 @@ clear() {
 # lists todos
 #
 list() {
-  if [ ! "`ls -tr $tododir`" ]; then
+  if [ ! "`ls -tr $TODODIR`" ]; then
     success "Todone!"
     exit
   fi
 
   echo
-  command ls -tr $tododir | while read file;
+  command ls -tr $TODODIR | while read TODO;
   do
-    echo $file | awk '{sub(/.md/, ""); print "· "$0}'
+    echo $TODO | awk '{sub(/.md/, ""); print "· "$0}'
   done
 }
 
