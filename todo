@@ -1,22 +1,28 @@
 #!/usr/bin/env sh
 
+#
+# be posixy
+#
 set -o posix
-
-typeset TODODIR="$HOME/.todo"
 
 #
 # be helpful
 #
 help() {
-  echo
-  echo "Todone!\nA basic todo list.\n"
-  echo "Options:"
-  echo "  -a  --add       Add a todo"
-  echo "  -d  --delete    Delete a todo"
-  echo "  -o  --open      Open a todo"
-  echo "  -l  --list      List all todos"
-  echo "  -c  --clear     Clear all todos"
-  echo "  -h  --help      Show this help message"
+  cat <<-EOF
+
+  Todone!
+  A basic todo list.
+
+  Options:
+    -a, --add <todo text>        Add a todo
+    -d, --delete <todo text>     Delete a todo
+    -o, --open                   Open a todo
+    -l, --list                   List all todos
+    -c, --clear                  Clear all todos
+    -h, --help                   Show this help message
+
+EOF
 }
 
 #
@@ -52,6 +58,11 @@ abort_noname() {
 # Make sure the todo folder exists
 #
 check_create_tododir() {
+  if [ $TODONE_DIR ]; then
+    TODODIR=$TODONE_DIR
+  else
+    TODODIR="$HOME/.todone"
+  fi
   command mkdir -p $TODODIR
 }
 
@@ -59,8 +70,6 @@ check_create_tododir() {
 # add a todo
 #
 add() {
-  check_create_tododir
-
   local NAME="$@"
   local FILEPATH="$TODODIR/$NAME.md"
 
@@ -148,6 +157,11 @@ list() {
     echo "· $TODO" | awk '{sub(/.md/, ""); print $0}'
   done
 }
+
+#
+# Todo it
+#
+check_create_tododir
 
 # parse argv
 while test $# -ne 0; do
