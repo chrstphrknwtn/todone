@@ -4,15 +4,19 @@ set -o posix
 
 typeset TODODIR="$HOME/.todo"
 
+#
+# be helpful
+#
 help() {
   echo
+  echo "Todone!\nA basic todo list.\n"
   echo "Options:"
-  echo "  -a --add    : Add a todo"
-  echo "  -d --delete : Delete a todo"
-  echo "  -o --open   : Open a todo"
-  echo "  -c --clear  : Clear all todos"
-  echo "  -l --list   : List all todos"
-  echo "  -h --help   : Show this help message"
+  echo "  -a  --add       Add a todo"
+  echo "  -d  --delete    Delete a todo"
+  echo "  -o  --open      Open a todo"
+  echo "  -l  --list      List all todos"
+  echo "  -c  --clear     Clear all todos"
+  echo "  -h  --help      Show this help message"
 }
 
 #
@@ -36,6 +40,7 @@ success() {
 abort_notfound() {
   abort "'$NAME' isn't a todo"
 }
+
 #
 # todo name not entered
 #
@@ -140,7 +145,7 @@ list() {
   echo
   command ls -tr $TODODIR | while read TODO;
   do
-    echo $TODO | awk '{sub(/.md/, ""); print "· "$0}'
+    echo "· $TODO" | awk '{sub(/.md/, ""); print $0}'
   done
 }
 
