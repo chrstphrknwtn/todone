@@ -136,7 +136,7 @@ clear() {
   read -r -p "Are you sure? [y/N] " response
   case $response in
     [yY][eE][sS]|[yY])
-      rm $TODODIR/* &> /dev/null
+      rm $TODODIR/*.md &> /dev/null
       success "Cleared todos"
       ;;
   esac
