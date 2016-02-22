@@ -29,7 +29,7 @@ EOF
 # abort with <msg>
 #
 abort() {
-  echo "\n\033[31m✖\033[0m $@" 1>&2
+  printf "\n\033[31m✖\033[0m %s\n\n" "$@" 1>&2
   exit 1
 }
 
@@ -37,7 +37,7 @@ abort() {
 # success with <msg>
 #
 success() {
-  echo "\n\033[32m✔︎\033[0m $@"
+  printf "\n\033[32m✔︎\033[0m %s\n\n" "$@"
 }
 
 #
@@ -79,7 +79,7 @@ add() {
 
   if [ ! -f "$FILEPATH" ]; then
     touch "$FILEPATH"
-    echo "# $NAME" >> "$FILEPATH"
+    printf "# %s" "$NAME" >> "$FILEPATH"
     success "'$NAME' todo added"
   else
     abort "'$NAME' is already a todo"
@@ -98,7 +98,7 @@ delete() {
   fi
 
   if [ -f "$FILEPATH" ]; then
-    rm "$FILEPATH"
+    rm "$FILEPATH" &> /dev/null
     success "'$NAME' todo deleted"
   else
     abort_notfound
@@ -151,11 +151,12 @@ list() {
     exit
   fi
 
-  echo
+  printf "\n"
   command ls -tr $TODODIR | while read TODO;
   do
-    echo "· $TODO" | awk '{sub(/.md/, ""); print $0}'
+    printf "· %s" $TODO | awk '{sub(/.md/, ""); print $0}'
   done
+  printf "\n"
 }
 
 #
@@ -171,7 +172,7 @@ while test $# -ne 0; do
     -d|--delete) delete $@; exit ;;
     -o|--open) open $@; exit ;;
     -c|--clear) clear; exit ;;
-    -d|--list) list; exit;;
+    -d|--list) list; exit ;;
     -h|--help) help; exit ;;
     *)
       test $# -eq 1 || abort "Unknown option"
