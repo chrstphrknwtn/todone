@@ -146,7 +146,7 @@ clear() {
 # Are we todone?
 #
 are_we_todone() {
-  if [ ! `ls -tr $TODODIR` ]; then
+  if [ ! "`ls -tr $TODODIR`" ]; then
     success "Todone!"
     exit
   fi
@@ -161,7 +161,7 @@ list() {
   printf "\n"
   command ls -tr $TODODIR | while read TODO;
   do
-    printf "· %s" $TODO | awk '{sub(/.md/, ""); print $0}'
+    printf "%s " $TODO | awk '{sub(/.md/, ""); print "· " $0}'
   done
   printf "\n"
 }
