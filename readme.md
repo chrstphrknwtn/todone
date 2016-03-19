@@ -4,6 +4,8 @@
 
 Creates todos as `.md` files in `~/.todone`.
 
+You can export a `$TODONE_DIR` path to choose where the markdown files are put.
+
 ## Install
 
 Make `./todo` visible in your `$PATH` somewhere.
